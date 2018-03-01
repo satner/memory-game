@@ -51,9 +51,8 @@ for (let i = 0; i < cardElements.length; i++) {
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 
-const TWO_STARS_DIFF = 5;
-const ONE_STARS_DIFF = 9;
-const ZERO_STARS_DIFF = 17;
+const TWO_STARS_DIFF = 10;
+const ONE_STARS_DIFF = 18;
 const DIFFERENT_IMAGES = 8;
 const STARS_NUMBER = 3;
 // Opened cards
@@ -65,19 +64,16 @@ var matches = 0;
 const deckClassElement = document.querySelector(".deck");
 deckClassElement.addEventListener("click", function(event) {
     if (totalMoves === 0) {
+        console.log("eimai edw ");
         startTimer();
     }
-    displayCounter(++totalMoves);
     revealCard(event);
     addCard(event);
     if (totalMoves - matches === TWO_STARS_DIFF) {
         removeStar(2);
     } else if (totalMoves - matches === ONE_STARS_DIFF) {
         removeStar(1);
-    } else if (totalMoves - matches === ZERO_STARS_DIFF) {
-        removeStar(0);
     }
-
 });
 
 function revealCard(event) {
@@ -87,6 +83,10 @@ function revealCard(event) {
 
 function addCard(event) {
     if (openedCards.length === 1) {
+        if (isSameNode(event)) {
+            return;
+        }
+        displayCounter(++totalMoves);
         if (isSameCard(event)) {
             removeShowOpenClasses(event);
             addMatchClass(event);
@@ -96,6 +96,7 @@ function addCard(event) {
             setTimeout(emptyCardList, 500);
         }
     } else {
+        displayCounter(++totalMoves);
         openedCards.push(event);
     }
 }
@@ -126,7 +127,14 @@ function emptyCardList() {
     openedCards.pop();
 }
 
-// Displat total move to the screen
+function isSameNode(event) {
+    if (openedCards[0].target.isSameNode(event.target)) {
+        return true;
+    }
+    return false;
+}
+
+// Displat total moves to the screen
 function displayCounter(totalMoves) {
     document.querySelector(".moves").innerHTML = totalMoves;
 }
@@ -172,6 +180,7 @@ function winMessage() {
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
         stopTime();
+        clearTime();
         modal.style.display = "none";
     }
 
@@ -179,6 +188,7 @@ function winMessage() {
     window.onclick = function(event) {
         if (event.target == modal) {
             stopTime();
+            clearTime();
             modal.style.display = "none";
         }
     }
