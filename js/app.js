@@ -55,16 +55,15 @@ const TWO_STARS_DIFF = 10;
 const ONE_STARS_DIFF = 18;
 const DIFFERENT_IMAGES = 8;
 const STARS_NUMBER = 3;
-// Opened cards
 var openedCards = [];
 var totalMoves = 0;
 var matches = 0;
+var clock;
 
 // Click listener
 const deckClassElement = document.querySelector(".deck");
 deckClassElement.addEventListener("click", function(event) {
     if (totalMoves === 0) {
-        console.log("eimai edw ");
         startTimer();
     }
     revealCard(event);
@@ -81,9 +80,10 @@ function revealCard(event) {
     event.target.classList.add("open");
 }
 
+var pre;
 function addCard(event) {
     if (openedCards.length === 1) {
-        if (isSameNode(event)) {
+        if (pre.target.isSameNode(event.target)) {
             return;
         }
         displayCounter(++totalMoves);
@@ -96,9 +96,15 @@ function addCard(event) {
             setTimeout(emptyCardList, 500);
         }
     } else {
+        if (pre != null) {
+            if (pre.target.isSameNode(event.target)) {
+                return;
+            }
+        }
         displayCounter(++totalMoves);
         openedCards.push(event);
     }
+    pre = event;
 }
 
 function isSameCard(event) {
@@ -127,12 +133,6 @@ function emptyCardList() {
     openedCards.pop();
 }
 
-function isSameNode(event) {
-    if (openedCards[0].target.isSameNode(event.target)) {
-        return true;
-    }
-    return false;
-}
 
 // Displat total moves to the screen
 function displayCounter(totalMoves) {
@@ -235,7 +235,6 @@ function resetStarsDisplay() {
 var minutesLabel = document.getElementById("minutes");
 var secondsLabel = document.getElementById("seconds");
 var totalSeconds = 0;
-var clock;
 
 function startTimer() {
     clock = setInterval(setTime, 1000);
@@ -261,6 +260,7 @@ function stopTime() {
 }
 
 function clearTime() {
+    totalSeconds = 0;
     document.getElementById("minutes").innerHTML = "00";
     document.getElementById("seconds").innerHTML = "00";
 }
