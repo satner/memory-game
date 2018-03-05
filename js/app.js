@@ -59,15 +59,26 @@ var openedCards = [];
 var totalMoves = 0;
 var matches = 0;
 var clock;
+var clicks = 0;
 
 // Click listener
+var pre;
 const deckClassElement = document.querySelector(".deck");
 deckClassElement.addEventListener("click", function(event) {
     if (totalMoves === 0) {
         startTimer();
     }
-    revealCard(event);
-    addCard(event);
+
+    if (pre != null) {
+        if (pre.target.isSameNode(event.target)) {
+            return;
+        }
+    }
+    clicks += 1;
+    if (twoClicks()) {
+        revealCard(event);
+        addCard(event);
+    }
     if (totalMoves - matches === TWO_STARS_DIFF) {
         removeStar(2);
     } else if (totalMoves - matches === ONE_STARS_DIFF) {
@@ -75,36 +86,42 @@ deckClassElement.addEventListener("click", function(event) {
     }
 });
 
+function twoClicks() {
+    if (clicks <= 2) {
+        return true;
+    }
+    return false;
+}
+
 function revealCard(event) {
     event.target.classList.add("show");
     event.target.classList.add("open");
 }
 
-var pre;
+
 function addCard(event) {
     if (openedCards.length === 1) {
-        if (pre.target.isSameNode(event.target)) {
-            return;
-        }
         displayCounter(++totalMoves);
         if (isSameCard(event)) {
             removeShowOpenClasses(event);
             addMatchClass(event);
+            clicks = 0;
         } else {
             setTimeout(removeShowOpenClasses, 500, openedCards[0]);
             setTimeout(removeShowOpenClasses, 500, event);
             setTimeout(emptyCardList, 500);
-        }
-    } else {
-        if (pre != null) {
-            if (pre.target.isSameNode(event.target)) {
-                return;
+            if (clicks === 2) {
+                setTimeout(function() {
+                    clicks = 0;
+                }, 500);
             }
         }
+        pre = null;
+    } else {
         displayCounter(++totalMoves);
         openedCards.push(event);
+        pre = event;
     }
-    pre = event;
 }
 
 function isSameCard(event) {
@@ -208,6 +225,8 @@ function resetAll() {
     resetStarsDisplay();
     stopTime();
     clearTime();
+    clicks = 0;
+    matches = 0;
 }
 // All Reset functions
 function resetAllCards() {
