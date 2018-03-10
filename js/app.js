@@ -26,7 +26,6 @@ function shuffle(array) {
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
     }
-
     return array;
 }
 
@@ -37,7 +36,6 @@ for (let i = 0; i < cardElements.length; i++) {
     let secondClassName = cardElements[i].classList[1];
     cardElements[i].classList.remove(secondClassName);
     cardElements[i].classList.add(shuffledListOfCards[i]);
-
 }
 
 /*
@@ -149,7 +147,6 @@ function addMatchClass(event) {
 function emptyCardList() {
     openedCards.pop();
 }
-
 
 // Displat total moves to the screen
 function displayCounter(totalMoves) {
